@@ -1,0 +1,78 @@
+<html>
+<head>
+    <style>
+        table {
+            font-family: Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+    </style>
+</head>
+<body>
+    <h1>Joshitha's Library</h1>
+    <h2>All Books</h2>
+    <table>
+        <tr>
+            <th>Book Name</th>
+            <th>Book Author</th>
+            <th>Book Price</th>
+            <th>Book Published</th>
+            <th>Book Rating</th>
+            <th>Book Availability</th>
+            <th>Issue</th>
+            <th>Return</th>
+            <th>Delete</th>
+        </tr>
+        <% data.forEach(element => { %>
+            <tr>
+                <td><%= element.name %></td>
+                <td><%= element.author %></td>
+                <td><%= element.price %></td>
+                <td><%= element.year %></td>
+                <td><%= element.rating %></td>
+                <td><%= element.state %></td>
+                <td>
+                    <% if (element.state === "Available") { %>
+                        <form action="/issue" method="post">
+                            <input type="hidden" name="name" value="<%= element.name %>">
+                            <button type="submit">Issue</button>
+                        </form>
+                    <% } %>
+                </td>
+                <td>
+                    <% if (element.state === "Issued") { %>
+                        <form action="/return" method="post">
+                            <input type="hidden" name="name" value="<%= element.name %>">
+                            <button type="submit">Return</button>
+                        </form>
+                    <% } %>
+                </td>
+                <td>
+                        <form action="/delete" method="post">
+                            <input type="hidden" name="name" value="<%= element.name %>">
+                            <button type="submit">Delete</button>
+                        </form>
+                   </td>
+            </tr>
+       <% }) %>
+    </table>
+    <h2>Add Book</h2>
+    <form action="/" method="post">
+        <input type="text" placeholder="Book Name" name="name" required>
+        <input type="text" placeholder="Book Price" name="price" required>
+        <input type="text" placeholder="Author" name="author" required>
+        <input type="text" placeholder="Year Published" name="year" required>
+        <input type="text" placeholder="Rating" name="rating" required>
+        <button type="submit">Add</button>
+
+    </form>
+</body>
+</html>
