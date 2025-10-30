@@ -3,6 +3,25 @@ const bodyParser = require('body-parser');
 
 const app = express();
 const PORT = 3000;
+let authors = 
+    [
+        "Erin Guendelsberger",
+        "Random House",
+        "Lori Haskins Houran"
+    ];
+
+let years = 
+    [
+        "2020",
+        "2021",
+        "2024"
+    ];
+
+let status = 
+    [
+        "Available",
+        "Issued"
+    ];    
 
 let books = 
     [
@@ -10,7 +29,7 @@ let books =
             "name":"Little Orange Pumpkin",
             "author":"Erin Guendelsberger",
             "price":"$19.99",
-            "year":"08/06/2024",
+            "year":"2024",
             "rating":"4.8",
             "state":"Available"
         },
@@ -18,7 +37,7 @@ let books =
             "name":"Open the Witch's Door",
             "author":"Random House",
             "price":"$9.50",
-            "year":"07/13/2021",
+            "year":"2021",
             "rating":"4.8",
             "state":"Available"
         },
@@ -26,7 +45,7 @@ let books =
             "name":"Let's go trick or treating",
             "author":"Lori Haskins Houran",
             "price":"$7.99",
-            "year":"07/06/2021",
+            "year":"2020",
             "rating":"4.7",
             "state":"Available"
         }
@@ -37,7 +56,7 @@ let books =
     app.use(bodyParser.urlencoded({extended:true}));
 
     app.get("/", (req, res) => {
-        res.render("home", {data: books});
+         res.render("home", {data: books, data1: authors, data2: years, data3: status, resAuthName: 'All', resYearName: 'All', resStateName: 'All'  });
     });
 
     app.post("/", (req, res) => {
@@ -51,7 +70,14 @@ let books =
         };
 
         books.push(newBook);
-        res.render("home", {data: books});
+        if (!authors.includes(req.body.author)) {
+            authors.push(req.body.author);
+        }
+        if (!years.includes(req.body.year)) {
+            years.push(req.body.year);
+        }
+        
+        res.render("home", {data: books, data1: authors, data2: years, data3: status, resAuthName: 'All', resYearName: 'All', resStateName: 'All'  });
 
     });
 
@@ -62,7 +88,7 @@ let books =
                 book.state="Issued";
             }
         });
-        res.render("home", {data: books});
+         res.render("home", {data: books, data1: authors, data2: years, data3: status, resAuthName: 'All', resYearName: 'All', resStateName: 'All'  });
     });
 
     app.post("/return", (req, res) => {
@@ -72,19 +98,60 @@ let books =
                 book.state = "Available";
             }
         });
-        res.render("home", {data: books});
+        res.render("home", {data: books, data1: authors, data2: years, data3: status, resAuthName: 'All', resYearName: 'All', resStateName: 'All'  });
     });
 
     app.post("/delete", (req, res) => {
         const reqBookName = req.body.name;
         books = books.filter(book => book.name !== reqBookName);
-        res.render("home", {data: books});
-    })
+        res.render("home", {data: books, data1: authors, data2: years, data3: status, resAuthName: 'All', resYearName: 'All', resStateName: 'All'  });
+    });
 
+    app.post("/filterByAuthor", (req, res) => {
+        const reqAuthName = req.body.authName;
+        if (reqAuthName === "All") {
+            res.render("home", {data: books, data1: authors, data2: years, data3: status, resAuthName: 'All', resYearName: 'All', resStateName: 'All'  });
+        }           
+        else {
+            const filteredBooks = books.filter(book => book.author === reqAuthName);
+            res.render("home", {data: filteredBooks, data1: authors, data2: years, data3: status, resAuthName: reqAuthName, resYearName: 'All', resStateName: 'All' });
+        }
+    });
 
-//app.get('/', (req, res) => {
-  //  res.send('Welcome to Joshitha\'s Library !');
-//})  
+    app.post("/filterByYear", (req, res) => {
+        const reqYearName = req.body.yearName;
+        if (reqYearName === "All") {
+            res.render("home", {data: books, data1: authors, data2: years, data3: status, resAuthName: 'All', resYearName: 'All', resStateName: 'All' });
+        }           
+        else {
+            const filteredBooks = books.filter(book => book.year === reqYearName);
+            res.render("home", {data: filteredBooks, data1: authors, data2: years, data3: status, resAuthName: 'All', resYearName: reqYearName, resStateName: 'All' });
+        }
+    });
+    
+     app.post("/filterByState", (req, res) => {
+        const reqStateName = req.body.stateName;
+        if (reqStateName === "All") {
+            res.render("home", {data: books, data1: authors, data2: years, data3: status, resAuthName: 'All', resYearName: 'All', resStateName: 'All' });
+        }           
+        else {
+            const filteredBooks = books.filter(book => book.state === reqStateName);
+            res.render("home", {data: filteredBooks, data1: authors, data2: years, data3: status, resAuthName: 'All', resYearName: 'All', resStateName: reqStateName });
+        }
+    });
+
+     app.post("/filterByName", (req, res) => {
+        const reqBookName = req.body.bookName;
+        if (reqBookName === "") {
+            res.render("home", {data: books, data1: authors, data2: years, data3: status, resAuthName: 'All', resYearName: 'All', resStateName: 'All' });
+        }           
+        else {
+            const filteredBooks = books.filter(book => book.name.includes(reqBookName));
+            res.render("home", {data: filteredBooks, data1: authors, data2: years, data3: status, resAuthName: 'All', resYearName: 'All', resStateName: 'All' });
+        }
+    });
+    
+
 
 
 // Start the server

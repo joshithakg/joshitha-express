@@ -1,78 +1,175 @@
 <html>
 <head>
-    <style>
-        table {
-            font-family: Arial, Helvetica, sans-serif;
-            border-collapse: collapse;
-            width: 100%;
-        }
-        td, th {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
-        tr:nth-child(even) {
-            background-color: #dddddd;
-        }
-    </style>
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <style>
+    .grid {
+      grid-template-columns: 1fr 3fr;
+      gap: 2rem;
+    }
+  </style>
 </head>
-<body>
-    <h1>Joshitha's Library</h1>
-    <h2>All Books</h2>
-    <table>
-        <tr>
-            <th>Book Name</th>
-            <th>Book Author</th>
-            <th>Book Price</th>
-            <th>Book Published</th>
-            <th>Book Rating</th>
-            <th>Book Availability</th>
-            <th>Issue</th>
-            <th>Return</th>
-            <th>Delete</th>
+<body class="container">
+  <header>
+    <nav>
+      <ul>
+        <li><h1>Joshitha's Library</h1></li>
+      </ul>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Books Search</h2>
+    <table class="box">
+        <tr class="box">
+            <td>
+             <form id = "searchForm" action="/filterByName" method="post">
+                <input type="hidden" id="bookName" name="bookName" value="">
+                <label for="brand"><b>Search Book Name:</b></label>
+                <input type="text" id="searchName" name="searchName">
+                <input type="submit" value="Search" onClick="searchBook()">
+             </form>
+            </td>
         </tr>
-        <% data.forEach(element => { %>
-            <tr>
-                <td><%= element.name %></td>
-                <td><%= element.author %></td>
-                <td><%= element.price %></td>
-                <td><%= element.year %></td>
-                <td><%= element.rating %></td>
-                <td><%= element.state %></td>
-                <td>
-                    <% if (element.state === "Available") { %>
-                        <form action="/issue" method="post">
-                            <input type="hidden" name="name" value="<%= element.name %>">
-                            <button type="submit">Issue</button>
-                        </form>
-                    <% } %>
-                </td>
-                <td>
-                    <% if (element.state === "Issued") { %>
-                        <form action="/return" method="post">
-                            <input type="hidden" name="name" value="<%= element.name %>">
-                            <button type="submit">Return</button>
-                        </form>
-                    <% } %>
-                </td>
-                <td>
-                        <form action="/delete" method="post">
-                            <input type="hidden" name="name" value="<%= element.name %>">
-                            <button type="submit">Delete</button>
-                        </form>
-                   </td>
-            </tr>
-       <% }) %>
     </table>
+    <h2>Books Filter</h2>
+    <table class="box">
+        <tr class="box">
+            
+            <td>
+             <form id = "authForm" action="/filterByAuthor" method="post">
+                <input type="hidden" id="authName" name="authName" value="All">
+                <label for="brand"><b>Book Author:</b></label>
+                <select id="authSelect" onchange="assignSelectedValue()">
+                    <option value="All">All</option>
+                    <% data1.forEach(element => { %>
+                        <option value="<%= element %>" <% if (element === resAuthName) { %> selected <% } %>><%= element %></option>
+                    <% }) %>
+                </select>
+             </form>
+            </td>
+            <td>
+            <form id = "yearForm" action="/filterByYear" method="post">
+                <input type="hidden" id="yearName" name="yearName" value="All">
+                <label for="brand"><b>Published Year:</b></label>
+                <select id="yearSelect" onchange="assignSelectedYearValue()">
+                    <option value="All">All</option>
+                    <% data2.forEach(element => { %>
+                        <option value="<%= element %>" <% if (element === resYearName) { %> selected <% } %>><%= element %></option>
+                    <% }) %>
+                </select>
+             </form>
+            <td>
+                <form id = "stateForm" action="/filterByState" method="post">
+                    <input type="hidden" id="stateName" name="stateName" value="All">
+                    <label for="brand"><b>Book Availability:</b></label>
+                    <select id="stateSelect" onchange="assignSelectedStateValue()">
+                        <option value="All">All</option>
+                        <% data3.forEach(element => { %>
+                            <option value="<%= element %>" <% if (element === resStateName) { %> selected <% } %>><%= element %></option>
+                        <% }) %>
+                    </select>
+                </form>
+            </td>
+        </tr>
+    </table>
+    <h2>Books List</h2>
+    <table class="box">
+            <tr class="box">
+                <th><b>Book Name</b></th>
+                <th><b>Book Author</b></th>
+                <th><b>Book Price</b></th>
+                <th><b>Book Published</b></th>
+                <th><b>Book Rating</b></th>
+                <th><b>Book Availability</b></th>
+                <th><b>Issue</b></th>
+                <th><b>Return</b></th>
+                <th><b>Delete</b></th>
+            </tr>
+            <% data.forEach(element => { %>
+                <tr class="box">
+                    <td><%= element.name %></td>
+                    <td><%= element.author %></td>
+                    <td><%= element.price %></td>
+                    <td><%= element.year %></td>
+                    <td><%= element.rating %></td>
+                    <td><%= element.state %></td>
+                    <td>
+                        <% if (element.state === "Available") { %>
+                            <form action="/issue" method="post">
+                                <input type="hidden" name="name" value="<%= element.name %>">
+                                <button type="submit" class="box">Issue</button>
+                            </form>
+                        <% } %>
+                    </td>
+                    <td>
+                        <% if (element.state === "Issued") { %>
+                            <form action="/return" method="post">
+                                <input type="hidden" name="name" value="<%= element.name %>">
+                                <button type="submit" class="box">Return</button>
+                            </form>
+                        <% } %>
+                    </td>
+                    <td>
+                            <form action="/delete" method="post">
+                                <input type="hidden" name="name" value="<%= element.name %>">
+                                <button type="submit" class="box">Delete</button>
+                            </form>
+                    </td>
+                </tr>
+        <% }) %>
+        </table>
+    </main>
+    <!-- Add Book Form -->
     <h2>Add Book</h2>
     <form action="/" method="post">
         <input type="text" placeholder="Book Name" name="name" required>
+        <input type="text" placeholder="Book Author" name="author" required>
+        <input type="text" placeholder="Published Year" name="year" required>
         <input type="text" placeholder="Book Price" name="price" required>
-        <input type="text" placeholder="Author" name="author" required>
-        <input type="text" placeholder="Year Published" name="year" required>
-        <input type="text" placeholder="Rating" name="rating" required>
+        <input type="text" placeholder="Book Rating" name="rating" required>
         <button type="submit">Add</button>
-
     </form>
+ <script>
+    
+    function assignSelectedValue() {
+        var form = document.getElementById("authForm");
+        var dropdown = document.getElementById("authSelect");
+        var selectedValue = dropdown.value; // Gets the value of the selected option
+        var hiddenInput = document.getElementById("authName");
+        hiddenInput.value = selectedValue; 
+        form.submit();
+    }
+
+    function assignSelectedYearValue() {
+        var form = document.getElementById("yearForm");
+        var dropdown = document.getElementById("yearSelect");
+        var selectedValue = dropdown.value; // Gets the value of the selected option
+        var hiddenInput = document.getElementById("yearName");
+        hiddenInput.value = selectedValue; 
+        form.submit();
+    }
+
+    function assignSelectedStateValue() {
+        var form = document.getElementById("stateForm");
+        var dropdown = document.getElementById("stateSelect");
+        var selectedValue = dropdown.value; // Gets the value of the selected option
+        var hiddenInput = document.getElementById("stateName");
+        hiddenInput.value = selectedValue; 
+        form.submit();
+    }
+
+    function searchBook() {
+        var form = document.getElementById("searchForm");
+        var dropdown = document.getElementById("searchName");
+        var selectedValue = dropdown.value; // Gets the value of the selected option
+        var hiddenInput = document.getElementById("bookName");
+        hiddenInput.value = selectedValue; 
+        form.submit();
+    }
+ </script>
 </body>
 </html>
