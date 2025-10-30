@@ -1,6 +1,6 @@
 ## Joshitha's Library
 
-Joshitha's Library is a functionl website to perform key operations in a library. The intention of this project is to only demonstrate the functionality of the library hence the website design is not given much attention. This is implemented using node.js, express.js and a template library at the backend and a minimal HTML, CSS and Java script code at the front end.
+Joshitha's Library is a functional website to perform key operations in a library such as listing books, search for books by name, filter the result by author, published year and availability. We can also add books and manage issue and return of the books.  The intention of this project is to demonstrate the functionalities of the library over the website design. I have implemented this project using node.js, express.js and EJS template library to dynamically generate the HTML content to render on the browser. 
 
 ### What the Project Is and What It Does
 
